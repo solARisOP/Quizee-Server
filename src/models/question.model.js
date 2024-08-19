@@ -7,6 +7,7 @@ const OptionSchema = new mongoose.Schema({
     },
     text:{
         type: String,
+        trim: true
     },
 },{
     timestamps: true
@@ -16,16 +17,17 @@ const QuestionSchema = new mongoose.Schema({
     quiz:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz",
-        required: [true, "every question should belong to a particular quiz"],
+        required: [true, "every question should belong to a particular quiz, quiz cannot be empty"],
     },
     question:{
         type: String,
-        required: [true, "question is compulsory"],
+        required: [true, "question is cannot be empty"],
         trim: true
     },
     timer:{
         type: Number,
-        enum: [0, 5, 10]
+        enum: [0, 5, 10],
+        default: 0
     },
     questiontype:{
         type: String,
@@ -43,7 +45,7 @@ const QuestionSchema = new mongoose.Schema({
 OptionSchema.pre('validate', function(next){
     const arr = [this.image, this.text].filter(feild => feild != null)
     if(!arr.length) {
-        return next(new ApiError(400, "atleast one of the option feilds required"));
+        return next(new ApiError(400, "atleast one of the option feilds required for options"));
     } 
     next();
 })
