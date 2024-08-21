@@ -1,28 +1,11 @@
 import mongoose from "mongoose";
 import { ApiError } from "../utils/ApiError";
 
-const OptionSchema = new mongoose.Schema({
-    image:{
-        type: String,
-    },
-    text:{
-        type: String,
-        trim: true
-    },
-},{
-    timestamps: true
-});
-
 const QuestionSchema = new mongoose.Schema({
-    quiz:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Quiz",
-        required: [true, "every question should belong to a particular quiz, quiz cannot be empty"],
-    },
     question:{
         type: String,
-        required: [true, "question is cannot be empty"],
-        trim: true
+        trim: true,
+        required: [true, "question cannot be empty"],
     },
     timer:{
         type: Number,
@@ -32,23 +15,23 @@ const QuestionSchema = new mongoose.Schema({
     questiontype:{
         type: String,
         enum: ['image', 'text', 'both'],
-        required: true
+        required: [true, "options of a question should have a type"],
     },
-    options:[OptionSchema],
+    options:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Option"
+    }],
     correct: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Option",
+    },
+    impression: {
         type: Number,
+        default: 0
     }
 },{
     timestamps: true
 });
-
-OptionSchema.pre('validate', function(next){
-    const arr = [this.image, this.text].filter(feild => feild != null)
-    if(!arr.length) {
-        return next(new ApiError(400, "atleast one of the option feilds required for options"));
-    } 
-    next();
-})
 
 QuestionSchema.pre('validate', function(next){
     if(this.options.length<2) {
@@ -56,9 +39,6 @@ QuestionSchema.pre('validate', function(next){
     }
     if(this.options.length>4) {
         return next(new ApiError(400, "maximum of four options is allowed"));
-    }
-    if(this.questiontype == 'both' && !this.options.every(feild => feild.image && feild.text)) {
-        return next(new ApiError(400, "both text and image are required"));
     }
     next();
 })

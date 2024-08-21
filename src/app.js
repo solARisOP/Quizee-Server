@@ -5,9 +5,35 @@ import 'express-async-errors';
 const app = express()
 
 //middlwares
+app.use(cors({
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}));
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static('public'))
 app.use(cookieParser())
+
+
+// routes import
+import userRouter from "./routes/user.routes.js";
+import quizRouter from "./routes/quiz.routes.js";
+import analysisRouter from "./routes/analysis.routes.js"
+import errorHandeler from "./middlewares/errorHandeller.middleware.js"
+
+
+// routes declaration
+app.use("/api/v1/users", userRouter)
+
+app.use("/api/v1/quiz", quizRouter)
+
+app.use("/api/v1/analysis", analysisRouter)
+
+
+//error handeller
+app.use(errorHandeler)
+
 
 export { app }

@@ -19,19 +19,22 @@ const QuizSchema = new mongoose.Schema({
     questions:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Question",
-        required: [true, "Quiz should contain questions"]
-    }]
+    }],
+    impression: {
+        type: Number,
+        default: 0
+    }
 },{
     timestamps: true
 });
 
 QuizSchema.pre('validate', function(next){
     if(!this.questions.length) {
-        return next(new ApiError(400, "atleast one question per quiz is necessary"));
+        return next(new ApiError(400, "quiz should contain atleast one question"));
     }
     if(this.questions.length>5) {
-        return next(new ApiError(400, "maximum of five questions are allowed"));
-    } 
+        return next(new ApiError(400, "quiz should contain more than five questions"));
+    }
     next();
 })
 
