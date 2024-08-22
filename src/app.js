@@ -1,6 +1,7 @@
+import "express-async-errors"
 import express from "express";
 import cookieParser from "cookie-parser";
-import 'express-async-errors';
+import cors from "cors"
 
 const app = express()
 

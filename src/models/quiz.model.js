@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
+import { ApiError } from "../utils/ApiError.js";
 
 const QuizSchema = new mongoose.Schema({
     owner:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [400, "quiz should belong to a particular user, user cannot be empty"]
+        required: [true, "quiz should belong to a particular user, user cannot be empty"]
     },
     name:{
         type: String,
         trim: true,
-        required: [400, "every quiz should contain a name"]
+        required: [true, "every quiz should contain a name"]
     },
     quiztype:{
         type: String,
+        trim: true,
         enum: ['poll', 'q&a'],
-        required: [400, "type of a quiz is required to create a quiz"]
+        required: [true, "type of a quiz is required to create a quiz"]
     },
     questions:[{
         type: mongoose.Schema.Types.ObjectId,

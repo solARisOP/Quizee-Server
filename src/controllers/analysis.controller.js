@@ -3,6 +3,7 @@ import { Question } from "../models/question.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import mongoose from "mongoose"
+import { Option } from "../models/option.model.js"
 
 const getTopQuizes = async (req, res) => {
 
@@ -65,17 +66,20 @@ const getQuizAnalysis = async (req, res) => {
                     {
                         $addFields: {
                             correctOption: {
-                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $first: "$correctRelatedOption" }, null]
+                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $first: "$correctRelatedOption" }, "$$REMOVE"]
                             }
                         }
                     },
                     {
                         $addFields: {
                             correctimpressions: {
-                                $cond: [{ $eq: ["$$quizType", "q&a"] }, "$correctOption.impression", null]
+                                $cond: [{ $eq: ["$$quizType", "q&a"] }, "$correctOption.impression", "$$REMOVE"]
                             },
                             incorrectimpressions: {
-                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $subtract: ["$$impress", "$correctOption.impression"] }, null]
+                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $subtract: ["$$impress", "$correctOption.impression"] }, "$$REMOVE"]
+                            },
+                            relatedOptions: {
+                                $cond: [{ $eq: ["$$quizType", "poll"] }, "$relatedOptions", "$$REMOVE"]
                             }
                         }
                     },
@@ -84,6 +88,9 @@ const getQuizAnalysis = async (req, res) => {
                             timer: 0,
                             questiontype: 0,
                             options: 0,
+                            correct: 0,
+                            correctOption: 0,
+                            correctRelatedOption: 0
                         }
                     }
                 ],
@@ -97,10 +104,10 @@ const getQuizAnalysis = async (req, res) => {
         }
     ])
 
-    if (!quiz) {
+    if (!quiz.length) {
         throw new ApiError(404, "quiz does not exists")
     }
-    if (quiz[0].owner != req.user._id) {
+    else if (!quiz[0].owner.equals(req.user._id)) {
         throw new ApiError(403, "quiz does not belong to the particular user")
     }
 
@@ -115,7 +122,7 @@ const getQuizAnalysis = async (req, res) => {
 
 const calculateScore_AddImpression = async (req, res) => {
     const { questions } = req.body
-    const {key} = req.params
+    const { key } = req.params
 
     var promise = []
     promise.push(Quiz.findByIdAndUpdate(

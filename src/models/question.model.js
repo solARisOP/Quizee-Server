@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/ApiError.js";
 
 const QuestionSchema = new mongoose.Schema({
     question:{
@@ -14,6 +14,7 @@ const QuestionSchema = new mongoose.Schema({
     },
     questiontype:{
         type: String,
+        trim: true,
         enum: ['image', 'text', 'both'],
         required: [true, "options of a question should have a type"],
     },

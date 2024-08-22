@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
     createQuiz,
-    takeQuiz,
+    getQuiz,
     deleteQuiz,
     updateQuiz
 } from "../controllers/quiz.controller.js"
@@ -14,8 +14,8 @@ router.route('/create-quiz').post(verifyJWT, createQuiz)
 
 router.route('/delete-quiz/:key').delete(verifyJWT, deleteQuiz)
 
-router.route('/update-quiz:key').patch(verifyJWT, updateQuiz)
+router.route('/update-quiz/:key').patch(verifyJWT, updateQuiz)
 
-router.route('/take-quiz').post(takeQuiz)
+router.route('/get-quiz').get(getQuiz)
 
 export default router
