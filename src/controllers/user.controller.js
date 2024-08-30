@@ -76,7 +76,8 @@ const loginUser = async(req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: 'None',
     }
 
     return res
@@ -107,7 +108,8 @@ const logoutUser = async(req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: 'None',
     }
 
     return res
@@ -117,8 +119,19 @@ const logoutUser = async(req, res) => {
     .json(new ApiResponse(200, {}, "user logged out successfully"))
 }
 
+const getUser = async(req, res) => {
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        {user:req.user},
+        "user fetched sucessfully"
+    ))
+}
+
 export {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    getUser
 }

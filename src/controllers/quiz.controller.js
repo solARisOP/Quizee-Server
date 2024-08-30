@@ -9,7 +9,7 @@ import { validateData, validateUpdationData } from "../validators/data.validator
 const createQuiz = async (req, res) => {
 
     const { name, type, questions } = req.body;
-
+    console.log(questions[0].options);
     validateData(name, type, questions)
 
     const promiseQuestions = []
@@ -106,7 +106,8 @@ const getQuiz = async (req, res) => {
 
 const deleteQuiz = async (req, res) => {
     const { key } = req.params;
-
+    console.log(key);
+    
     const quiz = await Quiz.findById(key);
 
     if (!quiz) {
@@ -146,9 +147,6 @@ const updateQuiz = async (req, res) => {
     for (const Id in data.questions) {
 
         const question = await Question.findById(Id);
-        if (data.questions[Id].question) {
-            question.question = data.questions[Id].question;
-        }
         if (data.questions[Id].timer) {
             question.timer = data.questions[Id].timer;
         }

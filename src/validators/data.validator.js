@@ -44,24 +44,24 @@ const validateData = (name, type, questions) => {
 
         for (const option of question.options) {
             if (qType == 'both') {
-                if (!option.image || option.image.trim() == "" || !option.text || option.text.trim() == "") {
-                    throw new ApiError(400, "questions with type as both should contain option as image and text")
+                if (!option.image || !option.image.trim() || !option.text || !option.text.trim()) {
+                    throw new ApiError(400, "questions with type as both should contain options as image and text")
                 }
             }
             else if (qType == 'text') {
-                if (!option.text || option.text.trim() == "") {
-                    throw new ApiError(400, "questions with type as text should contain option as text")
+                if (!option.text || !option.text.trim()) {
+                    throw new ApiError(400, "questions with type as text should contain options as text")
                 }
                 else if (option.image) {
-                    throw new ApiError(400, "questions with type as text should not contain image option")
+                    throw new ApiError(400, "questions with type as text should not contain options image")
                 }
             }
             else {
-                if (!option.image || option.image.trim() == "") {
-                    throw new ApiError(400, "questions with type as text should contain option as image")
+                if (!option.image || !option.image.trim()) {
+                    throw new ApiError(400, "questions with type as image should contain options as image")
                 }
-                else if (option.image) {
-                    throw new ApiError(400, "questions with type as image should not contain text option")
+                else if (option.text) {
+                    throw new ApiError(400, "questions with type as image should not contain options as text")
                 }
             }
         }
@@ -83,9 +83,6 @@ const validateUpdationData = async(req, key, data) => {
         if (data.questions[Id].timer && ![0, 5, 10].includes(data.questions[Id].timer)) {
             throw new ApiError(400, `${data.questions[Id].timer} is a invalid timer for a question`)
         }
-        else if(data.questions[Id].question && !data.questions[Id].question.trim()) {
-            throw new ApiError(400, `${data.questions[Id].question} is a invalid question for a question object`)
-        }
         const qId = new mongoose.Types.ObjectId(Id)
         if (!quiz.questions.some(element => element.equals(qId))) {
             throw new ApiError(400, `question ${Id} does not belong to this particular quiz`)
@@ -105,11 +102,11 @@ const validateUpdationData = async(req, key, data) => {
             throw new ApiError(400, "text cannot be empty for an option")
         }
         else if(data.options[Id].image && !data.options[Id].image.trim()) {
-            throw new ApiError(400, "text cannot be empty for an image")
+            throw new ApiError(400, "image url cannot be empty for an option")
         }
         const oId = new mongoose.Types.ObjectId(Id)
         if (!optionIds.some(element => element.equals(oId))) {
-            throw new ApiError(400, `question ${Id} does not belong to this particular quiz`)
+            throw new ApiError(400, `option ${Id} does not belong to this particular quiz`)
         }
     }
 }

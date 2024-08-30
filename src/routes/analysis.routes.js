@@ -16,6 +16,6 @@ router.route('/user-quizes').get(verifyJWT, getAllquizes)
 
 router.route('/quiz-analysis').get(verifyJWT, getQuizAnalysis)
 
-router.route('/evaluate-score/:key').patch(calculateScore_AddImpression)
+router.route('/evaluate-score/:key').post(calculateScore_AddImpression)
 
 export default router
