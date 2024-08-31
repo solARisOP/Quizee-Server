@@ -1,3 +1,4 @@
+import { Quiz } from "../models/quiz.model.js";
 import { User } from "../models/user.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
@@ -72,9 +73,16 @@ const loginUser = async(req, res) => {
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    const quizes = await Quiz.find({owner: user._id})
+
+    const loggedInUser = {
+        _id : user._id,
+        name : user.name,
+        email : user.email
+    }
 
     const options = {
+        maxAge: 86400*1000,
         httpOnly: true,
         secure: true,
         sameSite: 'None',
@@ -88,8 +96,7 @@ const loginUser = async(req, res) => {
         200, 
         {
             user: loggedInUser,
-            accessToken, 
-            refreshToken
+            quizes
         },
         "user logged in successfully"
     ))

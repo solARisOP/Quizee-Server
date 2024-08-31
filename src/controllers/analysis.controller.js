@@ -7,33 +7,20 @@ import { Option } from "../models/option.model.js"
 
 const getTopQuizes = async (req, res) => {
 
-    const quizes = await Quiz.find({owner: req.user._id})
-    
-    let totalQuestions = 0, impressions = 0;
-    for (const quiz of quizes) {
-        totalQuestions += quiz.questions.length
-        impressions += quiz.impression
-    }
-
     const trendingQuizes = await Quiz.find({ impression: { $gt: 10 }, owner: req.user._id }).select("-quiztype -owner -questions");
 
     return res
         .status(200)
         .json(new ApiResponse(
             200,
-            {
-                totalQuizes : quizes.length,
-                totalQuestions,
-                impressions, 
-                trendingQuizes
-            },
+            trendingQuizes,
             "dashboard data fetched successfully"
         ))
 }
 
 const getAllquizes = async (req, res) => {
 
-    const quizes = await Quiz.find({ owner: req.user._id }).select("-quiztype -owner -questions");
+    const quizes = await Quiz.find({ owner: req.user._id }).select("-quiztype -owner");
 
     return res
         .status(200)
