@@ -45,7 +45,7 @@ const getQuizAnalysis = async (req, res) => {
                 from: "questions",
                 localField: "questions",
                 foreignField: "_id",
-                let: { quizType: "$quiztype", impress: "$impression" },
+                let: { quizType: "$quiztype" },
                 pipeline: [
                     {
                         $lookup: {
@@ -76,7 +76,7 @@ const getQuizAnalysis = async (req, res) => {
                                 $cond: [{ $eq: ["$$quizType", "q&a"] }, "$correctOption.impression", "$$REMOVE"]
                             },
                             incorrectimpressions: {
-                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $subtract: ["$$impress", "$correctOption.impression"] }, "$$REMOVE"]
+                                $cond: [{ $eq: ["$$quizType", "q&a"] }, { $subtract: ["$impression", "$correctOption.impression"] }, "$$REMOVE"]
                             },
                             relatedOptions: {
                                 $cond: [{ $eq: ["$$quizType", "poll"] }, "$relatedOptions", "$$REMOVE"]

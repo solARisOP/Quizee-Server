@@ -9,7 +9,6 @@ import { validateData, validateUpdationData } from "../validators/data.validator
 const createQuiz = async (req, res) => {
 
     const { name, type, questions } = req.body;
-    console.log(questions[0].options);
     validateData(name, type, questions)
 
     const promiseQuestions = []
@@ -106,7 +105,6 @@ const getQuiz = async (req, res) => {
 
 const deleteQuiz = async (req, res) => {
     const { key } = req.params;
-    console.log(key);
     
     const quiz = await Quiz.findById(key);
 
