@@ -1,5 +1,5 @@
 import "express-async-errors"
-import express from "express";
+import express, { json } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors"
 
@@ -30,6 +30,12 @@ app.use("/api/v1/users", userRouter)
 app.use("/api/v1/quiz", quizRouter)
 
 app.use("/api/v1/analysis", analysisRouter)
+
+app.get('/', async(req, res)=>{
+    return res
+    .status(200)
+    .json({message : 'hello'});
+})
 
 
 //error handeller
